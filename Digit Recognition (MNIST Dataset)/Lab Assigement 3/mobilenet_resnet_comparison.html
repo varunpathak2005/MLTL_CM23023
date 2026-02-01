@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MobileNet Multi-Image Classification</title>
+
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
+
+  <!-- MobileNet v2 (global variable 'mobilenet') -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+</head>
+<body>
+  <h2>MobileNet Multi-Image Classification</h2>
+  <input type="file" id="imgInput" accept="image/*" multiple>
+  <p>Open <b>Console (F12)</b> to see predictions</p>
+
+  <div id="imageContainer"></div>
+
+  <script>
+    let mobilenetModel;
+
+    // Load MobileNet model after page loads
+    window.onload = async () => {
+      console.log("Loading MobileNet...");
+      mobilenetModel = await mobilenet.load();
+      console.log("MobileNet loaded successfully");
+    };
+
+    // Handle uploaded images
+    document.getElementById('imgInput').addEventListener('change', async (event) => {
+      if (!mobilenetModel) return console.log("Model not loaded yet!");
+
+      const files = event.target.files;
+      const container = document.getElementById('imageContainer');
+      container.innerHTML = ""; // clear previous images
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.width = 224;
+        img.height = 224;
+        img.style.margin = "10px";
+
+        // Add image to page
+        container.appendChild(img);
+
+        // Wait for image to load before classification
+        img.onload = async () => {
+          console.log(`\n--- Image ${i + 1}: ${file.name} ---`);
+          const predictions = await mobilenetModel.classify(img, 3);
+          console.log("Top-3 Predictions:");
+          predictions.forEach((p, idx) => {
+            console.log(`${idx + 1}. ${p.className} → ${(p.probability*100).toFixed(2)}%`);
+          });
+        };
+
+        img.onerror = () => console.log(`Failed to load image: ${file.name}`);
+      }
+    });
+
+    // ✅ Manual console command example:
+    // After selecting an image, run in console:
+    // mobilenetModel.classify(document.querySelector('img')).then(console.log)
+  </script>
+</body>
+</html>
