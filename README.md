@@ -1,6 +1,6 @@
 # MLT Lab CM23005
 
-This repository contains various machine learning laboratory assignments and projects for the CM23005 course. The projects are implemented using web technologies, primarily JavaScript and HTML, with machine learning libraries like TensorFlow.js.
+This repository contains various machine learning laboratory assignments and projects for the CM23023 course. The projects are implemented using web technologies, primarily JavaScript and HTML, with machine learning libraries like TensorFlow.js.
 
 ## Projects
 
